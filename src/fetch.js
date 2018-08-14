@@ -1,6 +1,6 @@
 import HttpError from "./HttpError";
 
-const fetchJson = (url, options = {}) => {
+export const fetchJson = (url, options = {}) => {
   const requestHeaders =
     options.headers ||
     new Headers({
