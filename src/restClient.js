@@ -10,7 +10,9 @@ import {
 
 import { jsonApiHttpClient, queryParameters } from "./fetch";
 
-export default (apiUrl, httpClient = jsonApiHttpClient) => {
+export default (apiUrl, options = {}, httpClient = jsonApiHttpClient) => {
+  const totalKey = options.totalKey || 'total';
+
   /**
    * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
    * @param {String} resource Name of the resource to fetch, e.g. 'posts'
@@ -25,7 +27,6 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
       case GET_LIST:
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
-        const { name, value } = params.filter;
         var query = {
           "page[size]": perPage,
           "page[number]": page
@@ -38,10 +39,12 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
           const targetFilter = "filter[" + params.target + "]";
           query[targetFilter] = params.id;
         }
-        if (order === "ASC") {
-          query.sort = field;
-        } else {
-          query.sort = "-" + field;
+        if (field !== null) {
+          if (order === "ASC") {
+            query.sort = field;
+          } else {
+            query.sort = "-" + field;
+          }
         }
         url = `${apiUrl}/${resource}?${queryParameters(query)}`;
         break;
@@ -121,7 +124,7 @@ export default (apiUrl, httpClient = jsonApiHttpClient) => {
           }
           return interDic;
         });
-        return { data: jsonData, total: json.meta["total"] };
+        return { data: jsonData, total: json.meta[totalKey] };
       case GET_MANY:
         jsonData = json.data.map(function(obj) {
           return Object.assign({ id: obj.id }, obj.attributes);
