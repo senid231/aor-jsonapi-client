@@ -1,12 +1,4 @@
-import {
-  GET_LIST,
-  GET_ONE,
-  GET_MANY,
-  GET_MANY_REFERENCE,
-  CREATE,
-  UPDATE,
-  DELETE
-} from "./types";
+import { CREATE, DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE, GET_ONE, UPDATE } from "./types";
 
 import { jsonApiHttpClient, queryParameters } from "./fetch";
 
@@ -97,6 +89,13 @@ export default (apiUrl, options = {}, httpClient = jsonApiHttpClient) => {
     const { headers, json } = response;
     switch (type) {
       case GET_MANY_REFERENCE:
+      case GET_ONE:
+        var jsonData = Object.assign(
+          { id: json.data.id },
+          json.data.attributes,
+          json.data.meta
+        );
+        return { data: jsonData };
       case GET_LIST:
         var jsonData = json.data.map(function(dic) {
           var interDic = Object.assign(
