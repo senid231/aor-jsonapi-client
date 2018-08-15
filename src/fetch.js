@@ -38,11 +38,15 @@ export const fetchJson = (url, options = {}) => {
 };
 
 export const jsonApiHttpClient = (url, options = {}) => {
-  if (!options.headers) {
-    options.headers = new Headers({ Accept: "application/vnd.api+json" });
+  let { onFetchCallback, ...opts } = options
+  if (onFetchCallback) {
+    onFetchCallback(opts)
   }
-  options.headers.set("Content-Type", "application/vnd.api+json");
-  return fetchJson(url, options);
+  if (!opts.headers) {
+    opts.headers = new Headers({ Accept: "application/vnd.api+json" });
+  }
+  opts.headers.set("Content-Type", "application/vnd.api+json");
+  return fetchJson(url, opts);
 };
 
 export const queryParameters = data =>

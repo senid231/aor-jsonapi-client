@@ -12,6 +12,7 @@ import { jsonApiHttpClient, queryParameters } from "./fetch";
 
 export default (apiUrl, options = {}, httpClient = jsonApiHttpClient) => {
   const totalKey = options.totalKey || 'total';
+  const onFetchCallback = options.onFetchCallback;
 
   /**
    * @param {String} type One of the constants appearing at the top if this file, e.g. 'UPDATE'
@@ -112,7 +113,7 @@ export default (apiUrl, options = {}, httpClient = jsonApiHttpClient) => {
               } else if (dic.relationships[key].links) {
                 //if relationships have a link field
                 var link = dic.relationships[key].links["self"];
-                httpClient(link).then(function(response) {
+                httpClient(link, {onFetchCallback}).then(function(response) {
                   interDic[key] = {
                     data: response.json.data,
                     count: response.json.data.length
@@ -150,7 +151,7 @@ export default (apiUrl, options = {}, httpClient = jsonApiHttpClient) => {
    */
   return (type, resource, params) => {
     const { url, options } = convertRESTRequestToHTTP(type, resource, params);
-    return httpClient(url, options).then(response =>
+    return httpClient(url, {onFetchCallback, ...options}).then(response =>
       convertHTTPResponseToREST(response, type, resource, params)
     );
   };
