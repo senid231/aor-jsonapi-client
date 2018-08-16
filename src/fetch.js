@@ -38,9 +38,9 @@ export const fetchJson = (url, options = {}) => {
 };
 
 export const jsonApiHttpClient = (url, options = {}) => {
-  let { onFetchCallback, ...opts } = options
+  let { onFetchCallback, ...opts } = options;
   if (onFetchCallback) {
-    onFetchCallback(opts)
+    opts = onFetchCallback(opts);
   }
   if (!opts.headers) {
     opts.headers = new Headers({ Accept: "application/vnd.api+json" });
